@@ -94,8 +94,8 @@ func getPOI(w http.ResponseWriter, req *http.Request) {
 
 func getJavascript(w http.ResponseWriter, req *http.Request) {
 	fetcher := NewFetcher("https", "www.locrating.com")
-	pOI := GetJavascript(fetcher)
-	b, err := json.Marshal(pOI)
+	javascript := GetJavascript(fetcher)
+	b, err := json.Marshal(javascript)
 	if err != nil {
 		fmt.Fprint(w, err)
 	}
@@ -104,8 +104,8 @@ func getJavascript(w http.ResponseWriter, req *http.Request) {
 
 func getInfoWindowDetails(w http.ResponseWriter, req *http.Request) {
 	fetcher := NewFetcher("https", "www.locrating.com")
-	pOI := GetInfoWindowDetails(fetcher)
-	b, err := json.Marshal(pOI)
+	infoWindowDetails := GetInfoWindowDetails(fetcher)
+	b, err := json.Marshal(infoWindowDetails)
 	if err != nil {
 		fmt.Fprint(w, err)
 	}
