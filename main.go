@@ -2,7 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
+	"net/http"
 	. "school_catchment_areas/fetcher"
 	"school_catchment_areas/types"
 )
@@ -80,21 +82,59 @@ func GetInfoWindowDetails(f *Fetcher) *types.InfoWindowDetails {
 	return GetInfoWindowDetails
 }
 
-func main() {
+func getPOI(w http.ResponseWriter, req *http.Request) {
 	fetcher := NewFetcher("https", "www.locrating.com")
 	pOI := GetPOI(fetcher)
-	log.Printf("pOI.POIs %v", len(pOI.POIs))
-	for _, v := range pOI.POIs {
-		log.Print(v)
+	b, err := json.Marshal(pOI)
+	if err != nil {
+		fmt.Fprint(w, err)
 	}
-	infoWindowDetails := GetInfoWindowDetails(fetcher)
-	log.Printf("infoWindowDetails.Details %v", len(infoWindowDetails.Details))
-	for _, v := range infoWindowDetails.Details {
-		log.Print(v)
+	fmt.Fprint(w, string(b))
+}
+
+func getJavascript(w http.ResponseWriter, req *http.Request) {
+	fetcher := NewFetcher("https", "www.locrating.com")
+	pOI := GetJavascript(fetcher)
+	b, err := json.Marshal(pOI)
+	if err != nil {
+		fmt.Fprint(w, err)
 	}
-	javascript := GetJavascript(fetcher)
-	log.Printf("javascript.Javascripts %v", len(javascript.Javascripts))
-	for _, v := range javascript.Javascripts {
-		log.Print(v)
+	fmt.Fprint(w, string(b))
+}
+
+func getInfoWindowDetails(w http.ResponseWriter, req *http.Request) {
+	fetcher := NewFetcher("https", "www.locrating.com")
+	pOI := GetInfoWindowDetails(fetcher)
+	b, err := json.Marshal(pOI)
+	if err != nil {
+		fmt.Fprint(w, err)
+	}
+	fmt.Fprint(w, string(b))
+}
+
+func main() {
+	/*
+		fetcher := NewFetcher("https", "www.locrating.com")
+		pOI := GetPOI(fetcher)
+		log.Printf("pOI.POIs %v", len(pOI.POIs))
+		for _, v := range pOI.POIs {
+			log.Print(v)
+		}
+		infoWindowDetails := GetInfoWindowDetails(fetcher)
+		log.Printf("infoWindowDetails.Details %v", len(infoWindowDetails.Details))
+		for _, v := range infoWindowDetails.Details {
+			log.Print(v)
+		}
+		javascript := GetJavascript(fetcher)
+		log.Printf("javascript.Javascripts %v", len(javascript.Javascripts))
+		for _, v := range javascript.Javascripts {
+			log.Print(v)
+		}
+	*/
+	http.HandleFunc("/getPOI", getPOI)
+	http.HandleFunc("/getJavascript", getJavascript)
+	http.HandleFunc("/getInfoWindowDetails", getInfoWindowDetails)
+	if err := http.ListenAndServe(":3030", nil); err != nil {
+		log.Fatal(err)
 	}
 }
